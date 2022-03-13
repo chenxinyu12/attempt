@@ -1,0 +1,39 @@
+module secmin (
+	input clk,
+	input rst,
+	input vld,
+	input [7:0] din,
+	output [7:0] dout
+);
+
+	reg [7:0] din_reg = 0;
+	reg [7:0] din_reg2 = 0;
+	reg [7:0] din_reg3 = 0;
+	reg [7:0] out1, out2;
+	
+	always @(posedge clk)
+		begin
+			if (rst) out2 <= 0;
+			else begin
+				if (vld) begin
+					if ((din_reg3 > din_reg && din_reg3 < din_reg2) || (din_reg3 > din_reg2 && din_reg3 < din_reg)) out1 <= din_reg3;
+					else if ((din_reg > din_reg3 && din_reg < din_reg2) || (din_reg > din_reg2 && din_reg < din_reg3)) out1 <= din_reg;
+					else out1 <= din_reg2;
+				end
+				
+				else begin	
+					out2 = out1;
+				end
+			end	
+			
+		end
+		
+	always @(din) begin
+		din_reg <= din;
+		din_reg2 <= din_reg;
+		din_reg3 <= din_reg2;
+	end
+	
+	assign dout = out2;
+	
+endmodule
